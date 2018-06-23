@@ -1,3 +1,4 @@
+function p1_convertpreprocess(batch_folder)
 % Conversion and Preprocessing
 % ** requires the Axion functions also included **
 % 
@@ -16,7 +17,9 @@
 %   - network spiking autocorrelation
 
 % define raw data folder to run conversion
-raw_data_folder = '/Users/rdgao/Documents/data/Lipton/MEA/';
+%raw_data_folder = '/Users/rdgao/Documents/data/Lipton/MEA/';
+cd(batch_folder)
+raw_data_folder = batch_folder;
 raw_files = dir('*.raw');
 wells2process=1:12; % which of the 12 wells in 12-well plate to analyze
 
