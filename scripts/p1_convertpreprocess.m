@@ -28,9 +28,9 @@ for f=1:length(raw_files)
     processed_file = [output_folder '/LFP_Sp.mat'];
     disp(raw_files(f).name)
     % do the conversion
-    MEA_convert(raw_files(f).name, output_folder, wells2process);
+    %MEA_convert(raw_files(f).name, output_folder, wells2process);
     % do preprocessing
-    MEA_process(output_folder, wells2process);
+    %MEA_process(output_folder, wells2process);
     % compute and saveout summary info
     MEA_summary(processed_file, [output_folder '/'], wells2process, 1)
 end

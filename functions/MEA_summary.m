@@ -60,6 +60,6 @@ if print_report
     figure(4)
     nice_figure(gcf, [output_folder 'nws_ac'], [12 9])
 end
-% close all
-% save([output_folder, 'summary.mat'], 'PSDm', 'PSDw', 'nws', 'nws_smo')
+close all
+save([output_folder, 'summary.mat'], 'PSDm', 'PSDw', 'nws', 'nws_smo')
 
