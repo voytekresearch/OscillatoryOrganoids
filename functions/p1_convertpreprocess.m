@@ -11,10 +11,11 @@ function p1_convertpreprocess(batch_folder)
 %   from Quiroga et al., Neural Comp (2004)
 %   - save LFP, spike timing, and spike waveforms to LFP_sp.mat
 %
-% For summary, MEA_summary saves (& optionally prints out):
+% For summary, MEA_summary computes and saves (& optionally prints out):
 %   - median and welch's PSD
 %   - network spike vector
 %   - network spiking autocorrelation
+% for all the wells, 
 
 % define raw data folder to run conversion
 %raw_data_folder = '/Users/rdgao/Documents/data/Lipton/MEA/';
@@ -28,9 +29,9 @@ for f=1:length(raw_files)
     processed_file = [output_folder '/LFP_Sp.mat'];
     disp(raw_files(f).name)
     % do the conversion
-    %MEA_convert(raw_files(f).name, output_folder, wells2process);
+    MEA_convert(raw_files(f).name, output_folder, wells2process);
     % do preprocessing
-    %MEA_process(output_folder, wells2process);
+    MEA_process(output_folder, wells2process);
     % compute and saveout summary info
     MEA_summary(processed_file, [output_folder '/'], wells2process, 1)
 end
