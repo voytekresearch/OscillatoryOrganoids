@@ -1,4 +1,4 @@
-load('/Users/rdgao/Documents/data/Muotri/Pri_Corticoids/aggregate.mat', 'PSDw');
+load('/Users/rdgao/Documents/data/Muotri/Pri_Corticoids/aggregate.mat', 'PSDw', 'recs');
 load('/Users/rdgao/Documents/data/Muotri/Pri_Corticoids/event_timing.mat');
 
 num_feat = 23;
