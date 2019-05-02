@@ -1,5 +1,5 @@
 % script for generating schematic figures for corticoid paper
-fig_folder =  '~/Dropbox/Research/Reports/Muotri/CorticoidFigs/';
+fig_folder =  '~/Dropbox/Research/Reports/2018 - CorticoidOscillation/CorticoidFigs/';
 cd ~/Documents/Data/Muotri/Pri_Corticoids/
 figure
 colors = get(gca,'colororder');
@@ -10,7 +10,7 @@ close all
 % plot example raster
 % recording Oct 18, 2016, corresponds to index 15 in data matrix
 load('organoids_processed/CTC_101816/LFP_Sp.mat', 'LFP', 'spikes', 'spike_shape', 't_s', 't_ds')
-load('aggregate.mat', 'nws_smo')
+load('aggregate.mat', 'nws_smo', 'kernels', 'LFP_ker_smo')
 load names.mat
 pkts = [6.319 43.02];
 date = find(strcmp({dates.name}, 'CTC_101816'));
@@ -94,10 +94,11 @@ title('Pop. Spiking Kernel')
 subplot(2,2,3)
 plot(t,LFP_ker_smo{date}{well}(:,:,chan),'color', [colors(1,:) 0.5], 'linewidth', 1)
 xlabel('Time (s)')
-ylabel('Voltage')
+ylabel('Voltage (V)')
 set(gca, 'xtick', [0 2])
-set(gca, 'ytick', 0)
-set(gca, 'yticklabel', '0')
+ylim([-2 2]*1e-5)
+set(gca, 'ytick', [-2:2]*1e-5)
+%set(gca, 'yticklabel', '0')
 xlim([-0.5, 2.5])
 box off
 title('LFP Kernel')
@@ -124,10 +125,110 @@ for well = 1:4
     plot(t,LFP_ker_smo{date}{wells(well)}(:,:,chans(well)),'color', [colors(1,:) 0.5], 'linewidth', 1)
     box off
     xlim([-0.5, 2.5])    
+    ylim([-2 2]*1e-5)
     set(gca, 'xtick', [])
     set(gca, 'ytick', [])
 end
-%nice_figure(gcf, [fig_folder '3_wellexamples'],[6 6])
+nice_figure(gcf, [fig_folder '3_wellexamples'],[6 6])
+
+%% plot PSD and spectrogram
+ctc_osc = load('/Users/rdgao/Documents/data/Muotri/Pri_Corticoids/organoids_processed/CTC_110416/LFP_Sp.mat');
+%%
+close all
+figure
+well = 12;
+chan = 20;
+date = find(strcmp({dates.name}, 'CTC_101816'));
+f_axis = 0:0.5:500;
+subplot(1,2,1)
+plot(f_axis,PSDw{date}{well}(:,chan), 'k', 'linewidth', 1);
+xlim([1,10])
+xlabel('Frequency (Hz)')
+ylabel('Power')
+
+subplot(1,2,2)
+loglog(f_axis,PSDw{date}{well}(:,chan), 'k', 'linewidth', 1);
+xlim([1,200])
+ylim(1e-14*[0.5, 200])
+xlabel('Frequency (Hz)')
+ylabel('Log10 Power')
+nice_figure(gcf, [fig_folder 'supp_PSDs'],[7 3.5])
+%%
+close all
+fs = 1000;
+f_lim = 400;
+figure
+subplot(2,1,1)
+plot(ctc_osc.t_ds, 1e6*ctc_osc.LFP{well}(:,chan), 'k')
+ylabel('Voltage (uV)')
+xlim([0,70])
+title('Local Field Potential')
+
+subplot(2,1,2)
+[S, F, T] = spectrogram(ctc_osc.LFP{well}(:,chan), fs*2, round(fs*1.75), fs*2, fs);
+imagesc(T,F(1:f_lim),log10((abs(S(1:f_lim,:)))./max(max((abs(S(1:f_lim,:)))))))
+title('Spectrogram')
+set(gca,'ydir', 'normal')
+xlabel('Time (seconds)')
+ylabel('Frequency (Hz)')
+xlim([1 60])
+set(gca,'xtick',[30, 60])
+h = colorbar('Location','eastoutside');
+set(h,'ylim',[-3 0])
+set(h,'ytick',-3:0)
+ylabel(h, 'Log10 Power')
+nice_figure(gcf, [fig_folder 'supp_spg'],[8 6])
+% set(h,'ycolor','w')
+%%
+
+subplot('position',[0.07,y_pos(i),0.62, 0.16])
+[S, F, T] = spectrogram(data_all{i}, FS_all{i}*2, round(FS_all{i}*1.75), FS_all{i}*2, FS_all{i});
+imagesc(T,F(1:50),(abs(S(1:50,:)))./max(max((abs(S(1:50,:))))))
+xlim([T(1) 60])
+ylim([0 10])
+set(gca,'xtick',[])
+box off
+title(labels{i})
+if i==1
+    h = colorbar('Location','east');
+    set(h,'ylim',[0 1])
+    set(h,'ytick',[0 0.5 1])
+    set(h,'ycolor','w')
+end
+
+hold on
+xb = zoom_win{i};
+yb = ylim+[0.2 -0.2];
+fbox = fill([xb(1) xb(2) xb(2) xb(1)], [yb(1) yb(1) yb(2) yb(2)], 'w');
+set(fbox, 'facecolor', 'none')
+set(fbox, 'edgecolor', 'w')
+hold off
+set(gca,'ytick',0:10:20)
+
+if i==1
+    ylabel('Frequency (Hz)')
+end
+if i==4
+    set(gca,'xtick', 0:20:60)
+    xlabel('Time (s)')
+end
+
+subplot('position',[0.8,y_pos(i),0.16, 0.16])
+loglog(freq_all{i}, PSD_all{i}(1:length(freq_all{i}),chans(i))./(max(PSD_all{i}(1:length(freq_all{i}),chans(i)))), 'linewidth',1)
+xlim([0 40])
+%ylim([min(PSD_all{i}(1:length(freq_all{i}),chans(i))), max(PSD_all{i}(1:length(freq_all{i}),chans(i)))])
+set(gca,'ytick',[0.01 1])
+set(gca,'yticklabel', {'0.01' '1'})
+set(gca,'xticklabel',[])
+box off
+if i==1
+    ylabel('Power (uV^2/Hz)')
+end
+if i==4
+    set(gca,'xtick', [1 10])
+    set(gca,'xticklabel', {'1' '10'})
+    xlabel('Frequency (Hz)')
+end
 
 %% sample time trace from different days - figure 3
 t = (-500:2500)/1000;
@@ -165,7 +266,7 @@ set(gca, 'ytick', [-2e-5 0 2e-5 4e-5])
 set(gca, 'yticklabel', {'-20' '0' '20' '40'})
 xlabel('Time (s)')
 ylabel('Voltage (uV)')
-nice_figure(gcf, [fig_folder '3_dayexamples'],[8 3.5])
+%nice_figure(gcf, [fig_folder '3_dayexamples'],[8 3.5])
 
 %% schematic of interpretation - figure 3
 figure
@@ -274,12 +375,14 @@ figure
 FS_all = {1000, 1000, 1000, eeg.fs};
 PSD_all = {PSDw{18}{12}, ...
     PSDw{38}{5}, ...
-    pwelch(fetal.LFP{7},fetal.fs_ds*2,fetal.fs_ds,fetal.fs_ds*2,fetal.fs_ds),...    
+    PSDw{38}{5}, ...
+    %pwelch(fetal.LFP{7},fetal.fs_ds*2,fetal.fs_ds,fetal.fs_ds*2,fetal.fs_ds),...    
     pwelch(data_all{4},eeg.fs*2,eeg.fs,eeg.fs*2,eeg.fs)};
+%%
 chans = [44, 15, 2, 1];
 freq_all = {0:0.5:45, 0:0.5:45, 0:0.5:45, 0:0.5:45};
 osc_range = {[2.5 4.5], [3 5], [6 10], [6 10]};
-
+%%
 for i=1:4
     subplot('position',[0.07,y_pos(i),0.62, 0.16])   
     [S, F, T] = spectrogram(data_all{i}, FS_all{i}*2, round(FS_all{i}*1.75), FS_all{i}*2, FS_all{i});

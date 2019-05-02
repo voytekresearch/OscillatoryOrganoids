@@ -61,7 +61,7 @@ lfp_ker = collect_spikes(LFP_smo,[],ker_ind(:,2),[-500 1000]);
 figure
 subplot(2,1,1)
 plot((-500:1000)/1000, ker, 'color', [0 0 0 0.2], 'linewidth', 1)
-ylim([0 20])
+ylim([])
 ylabel('Spikes')
 subplot(2,1,2)
 plot((-500:1000)/1000, lfp_ker, 'color', [colors(1,:) 0.2], 'linewidth', 1)

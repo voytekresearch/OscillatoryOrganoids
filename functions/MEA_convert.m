@@ -16,7 +16,11 @@ file = AxisFile(raw_file);
 % compute plate dimension from file header
 num_wells = length(unique([file.DataSets.ChannelArray.Channels.WellRow])) * ...
         length(unique([file.DataSets.ChannelArray.Channels.WellColumn]));    
-    
+
+if num_wells~=12 && num_wells~=48
+    % if you get something weird, default to 12 wells
+    num_wells=12;
+end
 %parameters & loading data into MATLAB
 if num_wells == 12
     %dimensions of the plate (# wells per row,col)
