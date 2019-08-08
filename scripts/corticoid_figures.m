@@ -94,10 +94,11 @@ title('Pop. Spiking Kernel')
 subplot(2,2,3)
 plot(t,LFP_ker_smo{date}{well}(:,:,chan),'color', [colors(1,:) 0.5], 'linewidth', 1)
 xlabel('Time (s)')
-ylabel('Voltage (V)')
+ylabel('Voltage (uV)')
 set(gca, 'xtick', [0 2])
 ylim([-2 2]*1e-5)
-set(gca, 'ytick', [-2:2]*1e-5)
+set(gca, 'ytick', [-2:2:2]*1e-5)
+yticklabels(gca,{'-20', '0', '20'})
 %set(gca, 'yticklabel', '0')
 xlim([-0.5, 2.5])
 box off
@@ -114,7 +115,7 @@ for well = 1:4
     xlim([-0.5, 2.5])
     ylim([0 25])
     set(gca, 'xtick', [])
-    set(gca, 'ytick', [])
+    %set(gca, 'ytick', [])
 end
 
 % plot LFP kernels from different wells
@@ -127,7 +128,8 @@ for well = 1:4
     xlim([-0.5, 2.5])    
     ylim([-2 2]*1e-5)
     set(gca, 'xtick', [])
-    set(gca, 'ytick', [])
+    set(gca, 'ytick', [-2, 0, 2]*1e-5)
+    yticklabels(gca,{'-20', '0', '20'})
 end
 nice_figure(gcf, [fig_folder '3_wellexamples'],[6 6])
 
