@@ -1,7 +1,7 @@
 from flask import Flask, render_template, Markup, Response
 from flask_socketio import SocketIO, emit
 from multiprocessing import Process
-from record import run_client
+from record import record 
 import time
 import os
 import sys
@@ -31,17 +31,26 @@ def connect():
 @socketio.on('disconnect')
 def disconnect():
     print('Client disconnected')
+
 def main():
-    schedule.every().day.at('14:30').do(run_client)
+    def startSchedule():
+#    schedule.every().day.at('14:30').do(record)
+    schedule.every().minute.do(record)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
     def startFlask():
         socketio.run(app, port=5000, debug=True)
     try:
+        record=Process(target=startSchedule)
+        record.start()
         flask=Process(target=startFlask)
         flask.start()
     except KeyboardInterrupt:
         print("Terminating flask server.")
         flask.terminate()
         flask.join()
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+        print("Terminating daily recording.")
+        record.terminate()
+        record.join()
+
