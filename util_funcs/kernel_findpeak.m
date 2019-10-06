@@ -1,6 +1,4 @@
 function pktimes = kernel_findpeak(x, MPH, MPH_ratio, MPD, toss_thresh_ratio)
-% returns pktimes, which has 3 columns: 
-% [first crossing, peak, last crossing]
 %% iterative peak sifting
 % 1. find all peaks (above some optional minimum value and dist)
 % 2. sort peak indices by peak amplitude

@@ -21,7 +21,7 @@ set(h,'edgealpha',.2)
 hold on
 plot(x,y,'color',c,'linewidth',1)
 %plot(x,y, 'o-','color',c, 'markerfacecolor',c, 'markersize',2)
-%hold off
+hold off
 if x(1)<x(end)
     xlim([x(1) x(end)])
 else
