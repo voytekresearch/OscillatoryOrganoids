@@ -1,5 +1,0 @@
-We have a persistent flask web server which will record at predetermined times, and run a simple analysis which gets output to a webpage.
-		  server
-		/	\
-analysis_script		record_script
-
