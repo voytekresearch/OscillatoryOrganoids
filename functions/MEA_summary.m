@@ -9,7 +9,7 @@ fs = mean(1./diff(t_s));
 
 % binarize spikes and get network spike
 disp('Computing.')
-bsp = squeeze(binarize_spikes(ceil(t_s(end)), fs, spikes, 1000));
+bsp = squeeze(binarize_spikes(t_ds(end), fs, spikes, 1000));
 nws = squeeze(sum(bsp,2));
 nws_smo = zeros(size(nws));
 
@@ -19,21 +19,33 @@ for well=wells
     nws_smo(well,:) = conv(nws(well,:),gausswin(50),'same');    
 end
 ac = autocorr(nws', 5000);
+% normalize AC
+ac = ac./ac(ceil(length(ac)/2), :);
+% set lag0 to 0 for better plotting
+ac(ceil(length(ac)/2), :) = 0;
+% transpose for saving
+ac = ac';
+t_ac = (-5000:5000)/fs_ds;
 
 % plotting
+f_axis = 0:0.5:fs_ds/2;
 disp('Plotting.')
 figure(1)
 figure(2)
 for well=wells
     figure(1)
     subplot(3,4,well)
-    loglog(0:0.5:fs_ds/2, PSDm{well})
+    loglog(f_axis, PSDm{well})
     xlim([1,fs_ds/2])
+    xticks([1,100])
+    xticklabels({'1', '100'})
     axis tight
     figure(2)
     subplot(3,4,well)
-    loglog(0:0.5:fs_ds/2, PSDw{well})
+    loglog(f_axis, PSDw{well})
     xlim([1,fs_ds/2])
+    xticks([1,100])
+    xticklabels({'1', '100'})
     axis tight
 end
 figure(1)
@@ -61,5 +73,5 @@ if print_report
     nice_figure(gcf, [output_folder 'nws_ac'], [12 9])
 end
 close all
-save([output_folder, 'summary.mat'], 'PSDm', 'PSDw', 'nws', 'nws_smo', 'ac')
+save([output_folder, 'summary.mat'], 'PSDm', 'PSDw', 'nws', 'nws_smo', 'ac', 't_ac', 't_ds', 'fs_ds', 'f_axis', 'wells')
 

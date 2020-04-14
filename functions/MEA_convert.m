@@ -19,6 +19,7 @@ num_wells = length(unique([file.DataSets.ChannelArray.Channels.WellRow])) * ...
 
 if num_wells~=12 && num_wells~=48
     % if you get something weird, default to 12 wells
+    disp('Weird number of channel/well combination')
     num_wells=12;
 end
 %parameters & loading data into MATLAB
