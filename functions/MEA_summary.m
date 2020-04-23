@@ -9,8 +9,9 @@ fs = mean(1./diff(t_s));
 
 % binarize spikes and get network spike
 disp('Computing.')
-bsp = squeeze(binarize_spikes(t_ds(end), fs, spikes, 1000));
+bsp = squeeze(binarize_spikes(ceil(t_ds(end)), fs, spikes, 1000));
 nws = squeeze(sum(bsp,2));
+nws = nws(:,1:length(t_ds));
 nws_smo = zeros(size(nws));
 
 for well=wells
@@ -54,7 +55,7 @@ figure(2)
 title('Welch PSD')
 
 plot_tight(nws_smo',[3,4],[],[])
-plot_tight(ac, [3,4],[],[])
+plot_tight(ac', [3,4],[],[])
 
 
 % saving plots
